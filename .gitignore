@@ -1,0 +1,4 @@
+filtered-v*.tar.gz
+filtered-v*/
+.build/
+*.BAK
