@@ -32,22 +32,26 @@ Rest of the options are passed to `import` of filtered module.
 
 - `by`
 
-Specify source filter module you want to apply on an external module.
+Specify a source filter module you want to apply on an external module.
 
 - `as`
 
-Specify package name for filtered module.
+Specify the package name for the resultant filtered module.
 This option can be omitted. If omitted, original names are used.
 
 - `on`
 
-`on` keyword can be ommited.
+Specify a target module. `on` keyword can be ommited. 
 
 # CAVEATS
 
+- This module uses @INC hook.
+
+For @INC hook, please consult `perldoc -f require`. Hook itself is enabled in short period but it may affect other modules.
+
 - Replacement by `as` is applied in limited context.
 
-If you specified `as =` FilteredTarget, on => Target>, the following codes:
+If you specified `as => FilteredTarget, on => Target`, the following codes:
 
     package Target::work;
     package Target;

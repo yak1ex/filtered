@@ -176,16 +176,16 @@ Rest of the options are passed to C<import> of filtered module.
 
 =item C<by>
 
-Specify source filter module you want to apply on an external module.
+Specify a source filter module you want to apply on an external module.
 
 =item C<as>
 
-Specify package name for filtered module.
+Specify the package name for the resultant filtered module.
 This option can be omitted. If omitted, original names are used.
 
 =item C<on>
 
-C<on> keyword can be ommited.
+Specify a target module. C<on> keyword can be ommited. 
 
 =back
 
@@ -193,9 +193,13 @@ C<on> keyword can be ommited.
 
 =over 4
 
+=item This module uses @INC hook.
+
+For @INC hook, please consult C<perldoc -f require>. Hook itself is enabled in short period but it may affect other modules.
+
 =item Replacement by C<as> is applied in limited context.
 
-If you specified C<as => FilteredTarget, on => Target>, the following codes:
+If you specified C<as =E<gt> FilteredTarget, on =E<gt> Target>, the following codes:
 
   package Target::work;
   package Target;
