@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+v0.0.2    2012-10-13 13:22:59 Asia/Tokyo
     * Fix missing prereq to Test::Exception.
 
 v0.0.1    2012-10-13 01:02:26 Asia/Tokyo
