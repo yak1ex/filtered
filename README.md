@@ -20,6 +20,10 @@ filtered - Apply source filter on external module
     use filtered by => 'YourFilter1', as => 'FilteredTarget1', on => 'Target', qw(func);
     use filtered by => 'YourFilter2', as => 'FilteredTarget2', on => 'Target', qw(func);
 
+    # If you need to pass some arguments to source filter, you can use `with' option
+    # NOTE that this is just a scalar string.
+    use filtered by => 'YourFilter', with => 'qw(foo bar)', as => 'FilteredTarget', on => 'Target', qw(func);
+
 # DESCRIPTION
 
 Source filter has unlimited power to enhance Perl.
@@ -33,6 +37,10 @@ Rest of the options are passed to `import` of filtered module.
 - `by`
 
 Specify a source filter module you want to apply on an external module.
+
+- `with`
+
+Specify arguments passed to source filter.  NOTE that this value is just embedded as a scalar string.
 
 - `as`
 
