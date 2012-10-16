@@ -1,4 +1,4 @@
-use Test::More tests => 12;
+use Test::More tests => 14;
 use Test::Exception;
 
 use FindBin;
@@ -25,7 +25,10 @@ BEGIN { use_ok('filtered', by => 'MyFilter2', as => 'FilteredTest3', on => 'Filt
 # Different target should be available
 BEGIN { use_ok('filtered', by => 'MyFilter2', 'FilterTest3'); }
 
+BEGIN { use_ok('filtered', by => 'MyFilter3', as => 'FilteredTest4', with => 'sub { s/FOO/BAR/g }', on => 'FilterTest'); }
+
 is(FilteredTest::call(), 'BARBARBAR');
 is(FilteredTest2::call(), 'BARFOO');
 is(FilteredTest3::call(), 'BARBAR');
 is(FilterTest3::call(), 'BARZOTZOT');
+is(FilteredTest4::call(), 'BARBARBAR');

@@ -17,10 +17,11 @@ sub new
 # NOTE: To store data in object is probably not good idea because this prohibits re-entrance.
 sub init
 {
-	my ($self, $target, $as) = @_;
+	my ($self, $target, $as, $with) = @_;
 
 	$self->{_TARGET} = $target;
 	$self->{_AS} = $as;
+	$self->{_WITH} = $with;
 	return $self;
 }
 
@@ -66,7 +67,11 @@ sub filtered::hook::INC
 		my ($sub, $state) = @_;
 		if($state == 1) { # Inject filter at the beginning
 			delete $INC{$filename};
-			$_ = 'use '.$self->{_FILTER}.";\n";
+			if(defined $self->{_WITH}) {
+				$_ = 'use '.$self->{_FILTER}.' '.$self->{_WITH}.";\n";
+			} else {
+				$_ = 'use '.$self->{_FILTER}.";\n";
+			}
 			$_[1] = 0;
 		} elsif(eof($fh)) {
 			close $fh;
@@ -93,7 +98,7 @@ my %hook;
 sub import
 {
 	my ($class, @args) = @_;
-	my ($filter, $target, $as);
+	my ($filter, $target, $as, $with);
 	while(1) {
 		if($args[0] eq 'by') {
 			shift @args;
@@ -101,6 +106,9 @@ sub import
 		} elsif($args[0] eq 'as') {
 			shift @args;
 			$as = shift @args;
+		} elsif($args[0] eq 'with') {
+			shift @args;
+			$with = shift @args;
 		} elsif($args[0] eq 'on') {
 			shift @args;
 			$target = shift @args;
@@ -114,7 +122,7 @@ sub import
 	croak '`by\' must be specified' if ! defined($filter);
 	croak '`on\' or target name must be specified' if ! defined($target);
 	$hook{$filter} = filtered::hook->new(FILTER => $filter) if ! exists $hook{$filter};
-	unshift @INC, 	$hook{$filter}->init($target, $as);
+	unshift @INC, 	$hook{$filter}->init($target, $as, $with);
 	if(!defined eval "require $target") {
 		delete $INC{$hook{$filter}{_FILENAME}}; # For error in internal require
 		croak "Can't load $target by $@";
@@ -162,6 +170,10 @@ filtered - Apply source filter on external module
   use filtered by => 'YourFilter1', as => 'FilteredTarget1', on => 'Target', qw(func);
   use filtered by => 'YourFilter2', as => 'FilteredTarget2', on => 'Target', qw(func);
 
+  # If you need to pass some arguments to source filter, you can use `with' option
+  # NOTE that this is just a scalar string.
+  use filtered by => 'YourFilter', with => 'qw(foo bar)', as => 'FilteredTarget', on => 'Target', qw(func);
+
 =head1 DESCRIPTION
 
 Source filter has unlimited power to enhance Perl.
@@ -177,6 +189,10 @@ Rest of the options are passed to C<import> of filtered module.
 =item C<by>
 
 Specify a source filter module you want to apply on an external module.
+
+=item C<with>
+
+Specify arguments passed to source filter.  NOTE that this value is just embedded as a scalar string.
 
 =item C<as>
 

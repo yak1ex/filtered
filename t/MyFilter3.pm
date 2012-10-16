@@ -3,7 +3,8 @@ package MyFilter3;
 use Filter::Simple;
 
 FILTER sub {
-    s/FOO/ZOT/g;
+    my ($pkg, $func) = @_;
+    $func->();
 };
 
 1;
