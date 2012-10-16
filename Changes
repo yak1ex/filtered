@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * Fix incorrect prereq name.
+    * Add `with' option.
 
 v0.0.2    2012-10-13 13:22:59 Asia/Tokyo
     * Fix missing prereq to Test::Exception.
