@@ -5,7 +5,8 @@ filtered - Apply source filter on external module
 # SYNOPSIS
 
     # Apply source filter YourFilter.pm on Target.pm, then result can be used as FilteredTarget
-    use filtered by => 'YourFilter', as => 'FilteredTarget', on => 'Target', qw(func);
+    # PPI is used for package name replacement specified by C<as>
+    use filtered by => 'YourFilter', as => 'FilteredTarget', on => 'Target', use_ppi => 1, qw(func);
     my $obj = FilteredTarget->new;
 
     # You can omit `as' option and `on' key
@@ -36,7 +37,7 @@ Rest of the options are passed to `import` of filtered module.
 
 - `by`
 
-Specify a source filter module you want to apply on an external module.
+Mandatory. Specify a source filter module you want to apply on an external module.
 
 - `with`
 
@@ -49,7 +50,11 @@ This option can be omitted. If omitted, original names are used.
 
 - `on`
 
-Specify a target module. `on` keyword can be ommited. 
+Mandatory. Specify a target module. `on` keyword can be ommited if this is the last option.
+
+- `use_ppi`
+
+If true, [PPI](http://search.cpan.org/perldoc?PPI) is used for replacement by `as`. If PPI is available, defaults to true. Otherwise false.
 
 # CAVEATS
 
@@ -71,7 +76,7 @@ are transformed into as follows:
     package FilteredTarget;
     FilteredTarget::work::call();
 
-Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced.
+Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `use_ppi` is false. `'\bTarget\b'` in arguments of `package` statements and bare words are replaced if `use_ppi` is true.
 
 # SEE ALSO
 
