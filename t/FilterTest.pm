@@ -11,4 +11,9 @@ sub call
     return 'FOOFOOFOO';
 }
 
+sub ppi_check
+{
+    return 'FilterTest::Module';
+}
+
 1;

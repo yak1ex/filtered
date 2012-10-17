@@ -17,12 +17,25 @@ sub new
 # NOTE: To store data in object is probably not good idea because this prohibits re-entrance.
 sub init
 {
-	my ($self, $target, $as, $with) = @_;
+	my ($self, $target, $as, $with, $ppi) = @_;
 
 	$self->{_TARGET} = $target;
 	$self->{_AS} = $as;
 	$self->{_WITH} = $with;
+	$self->{_PPI} = $ppi;
 	return $self;
+}
+
+sub _filter_by_ppi
+{
+	my ($self, $ref) = @_;
+
+	require PPI::Transform::PackageName;
+	my $trans = PPI::Transform::PackageName->new(
+		-package_name => sub { s/\b$self->{_TARGET}/$self->{_AS}/ },
+		-word         => sub { s/\b$self->{_TARGET}\b/$self->{_AS}/ },
+	);
+	$trans->apply($ref);
 }
 
 sub filtered::hook::INC
@@ -60,9 +73,21 @@ sub filtered::hook::INC
 		die "Can't find $filename in \@INC";
 	}
 
+	my ($qr1, $qr2);
 	open my $fh, '<', $realfilename;
-	my $qr1 = qr/\b(package\s+)$self->{_TARGET}\b/;
-	my $qr2 = qr/\b$self->{_TARGET}::\b/;
+	if(defined $self->{_AS}) {
+		if($self->{_PPI}) {
+			local $/;
+			my $content = <$fh>;
+			close $fh;
+			undef $fh;
+			$self->_filter_by_ppi(\$content);
+			open $fh, '<', \$content;
+		} else {
+			$qr1 = qr/\b(package\s+)$self->{_TARGET}\b/;
+			$qr2 = qr/\b$self->{_TARGET}::\b/;
+		}
+	}
 	return (sub {
 		my ($sub, $state) = @_;
 		if($state == 1) { # Inject filter at the beginning
@@ -76,7 +101,7 @@ sub filtered::hook::INC
 		} elsif(eof($fh)) {
 			close $fh;
 			return 0;
-		} elsif(defined $self->{_AS}) {
+		} elsif(defined $self->{_AS} && ! $self->{_PPI}) {
 			$_ = <$fh>;
 			s {$qr1} {${1}$self->{_AS}};
 			s {$qr2} {$self->{_AS}::};
@@ -94,12 +119,16 @@ package filtered;
 use Carp;
 
 my %hook;
+my $USE_PPI;
+BEGIN { $USE_PPI = eval { require PPI; }; }
 
 sub import
 {
 	my ($class, @args) = @_;
 	my ($filter, $target, $as, $with);
+	my $ppi = $USE_PPI;
 	while(1) {
+		last unless @args;
 		if($args[0] eq 'by') {
 			shift @args;
 			$filter = shift @args;
@@ -109,12 +138,14 @@ sub import
 		} elsif($args[0] eq 'with') {
 			shift @args;
 			$with = shift @args;
+		} elsif($args[0] eq 'use_ppi') {
+			shift @args;
+			$ppi = shift @args;
 		} elsif($args[0] eq 'on') {
 			shift @args;
 			$target = shift @args;
-			last;
 		} else {
-			$target = shift @args;
+			$target = shift @args unless defined $target;
 			last;
 		}
 	}
@@ -122,7 +153,7 @@ sub import
 	croak '`by\' must be specified' if ! defined($filter);
 	croak '`on\' or target name must be specified' if ! defined($target);
 	$hook{$filter} = filtered::hook->new(FILTER => $filter) if ! exists $hook{$filter};
-	unshift @INC, 	$hook{$filter}->init($target, $as, $with);
+	unshift @INC, 	$hook{$filter}->init($target, $as, $with, $ppi);
 	if(!defined eval "require $target") {
 		delete $INC{$hook{$filter}{_FILENAME}}; # For error in internal require
 		croak "Can't load $target by $@";
@@ -155,7 +186,8 @@ filtered - Apply source filter on external module
 =head1 SYNOPSIS
 
   # Apply source filter YourFilter.pm on Target.pm, then result can be used as FilteredTarget
-  use filtered by => 'YourFilter', as => 'FilteredTarget', on => 'Target', qw(func);
+  # PPI is used for package name replacement specified by C<as>
+  use filtered by => 'YourFilter', as => 'FilteredTarget', on => 'Target', use_ppi => 1, qw(func);
   my $obj = FilteredTarget->new;
 
   # You can omit `as' option and `on' key
@@ -188,7 +220,7 @@ Rest of the options are passed to C<import> of filtered module.
 
 =item C<by>
 
-Specify a source filter module you want to apply on an external module.
+Mandatory. Specify a source filter module you want to apply on an external module.
 
 =item C<with>
 
@@ -201,7 +233,11 @@ This option can be omitted. If omitted, original names are used.
 
 =item C<on>
 
-Specify a target module. C<on> keyword can be ommited. 
+Mandatory. Specify a target module. C<on> keyword can be ommited if this is the last option.
+
+=item C<use_ppi>
+
+If true, L<PPI> is used for replacement by C<as>. If PPI is available, defaults to true. Otherwise false.
 
 =back
 
@@ -227,7 +263,7 @@ are transformed into as follows:
   package FilteredTarget;
   FilteredTarget::work::call();
 
-Actually, only C<'\bpackage\s+Target\b'> and C<'\bTarget::\b'> are replaced.
+Actually, only C<'\bpackage\s+Target\b'> and C<'\bTarget::\b'> are replaced if C<use_ppi> is false. C<'\bTarget\b'> in arguments of C<package> statements and bare words are replaced if C<use_ppi> is true.
 
 =back
 
