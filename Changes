@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * Add using PPI feature (use_ppi option).
 
 v0.0.3    2012-10-17 01:19:14 Asia/Tokyo
     * Fix incorrect prereq name.
