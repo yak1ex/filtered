@@ -166,7 +166,7 @@ sub import
 	{
 		no strict 'refs'; ## no critic (ProhibitNoStrict)
 		no warnings 'once';
-		my $import = *{$_[0].'::import'}{CODE};
+		my $import = $_[0]->can('import');
 		if(defined $import) {
 			goto &$import;
 		} elsif ($_[0]->isa('Exporter')) {
