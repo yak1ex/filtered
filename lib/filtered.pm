@@ -155,7 +155,7 @@ sub import
 	$hook{$filter} = filtered::hook->new(FILTER => $filter) if ! exists $hook{$filter};
 	unshift @INC, 	$hook{$filter}->init($target, $as, $with, $ppi);
 	if(!defined eval "require $target") {
-		delete $INC{$hook{$filter}{_FILENAME}}; # For error in internal require
+		delete $INC{$hook{$filter}{_FILENAME}}; # For error in internal require;
 		croak "Can't load $target by $@";
 	}
 	if(defined $as) {
