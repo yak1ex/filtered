@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+v0.0.4    2012-10-18 02:47:28 Asia/Tokyo
     * Add using PPI feature (use_ppi option).
 
 v0.0.3    2012-10-17 01:19:14 Asia/Tokyo
