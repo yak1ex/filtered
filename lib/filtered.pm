@@ -1,6 +1,11 @@
 use strict;
 use warnings;
 
+package filtered; # for Pod::Weaver
+
+# ABSTRACT: Apply source filter on external module
+# VERSION
+
 package filtered::hook; ## no critic (RequireFilenameMatchesPackage)
 
 # VERSION
@@ -114,7 +119,6 @@ sub filtered::hook::INC
 
 package filtered;
 
-# VERSION
 
 use Carp;
 
@@ -179,10 +183,6 @@ sub import
 __END__
 =pod
 
-=head1 NAME
-
-filtered - Apply source filter on external module
-
 =head1 SYNOPSIS
 
   # Apply source filter YourFilter.pm on Target.pm, then result can be used as FilteredTarget
@@ -212,44 +212,40 @@ Source filter has unlimited power to enhance Perl.
 However, source filter is usually applied on your own sources.
 This module enables you to apply source filter on external module.
 
-=head1 OPTIONS
-
-Rest of the options are passed to C<import> of filtered module.
-
-=over 4
-
-=item C<by>
+=option C<by>
 
 Mandatory. Specify a source filter module you want to apply on an external module.
 
-=item C<with>
+=option C<with>
 
 Specify arguments passed to source filter.  NOTE that this value is just embedded as a scalar string.
 
-=item C<as>
+=option C<as>
 
 Specify the package name for the resultant filtered module.
 This option can be omitted. If omitted, original names are used.
 
-=item C<on>
+=option C<on>
 
 Mandatory. Specify a target module. C<on> keyword can be ommited if this is the last option.
 
-=item C<use_ppi>
+=option C<use_ppi>
 
 If true, L<PPI> is used for replacement by C<as>. If PPI is available, defaults to true. Otherwise false.
 
-=back
+=option Others
+
+Rest of the options are passed to C<import> of filtered module.
 
 =head1 CAVEATS
 
-=over 4
+=begin :list
 
-=item This module uses @INC hook.
+= This module uses @INC hook.
 
 For @INC hook, please consult C<perldoc -f require>. Hook itself is enabled in short period but it may affect other modules.
 
-=item Replacement by C<as> is applied in limited context.
+= Replacement by C<as> is applied in limited context.
 
 If you specified C<as =E<gt> FilteredTarget, on =E<gt> Target>, the following codes:
 
@@ -265,29 +261,12 @@ are transformed into as follows:
 
 Actually, only C<'\bpackage\s+Target\b'> and C<'\bTarget::\b'> are replaced if C<use_ppi> is false. C<'\bTarget\b'> in arguments of C<package> statements and bare words are replaced if C<use_ppi> is true.
 
-=back
+=end :list
 
 =head1 SEE ALSO
 
-=over 4
-
-=item *
-
-L<http://github.com/yak1ex/filtered> - Github repository
-
-=item *
-
-L<Filter::Simple> - Helper module to implement source filter
-
-=back
-
-=head1 AUTHOR
-
-Yasutaka ATARASHI <yakex@cpan.org>
-
-=head1 LICENSE
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+=for :list
+* L<http://github.com/yak1ex/filtered> - Github repository
+* L<Filter::Simple> - Helper module to implement source filter
 
 =cut
