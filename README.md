@@ -2,6 +2,10 @@
 
 filtered - Apply source filter on external module
 
+# VERSION
+
+version v0.0.5
+
 # SYNOPSIS
 
     # Apply source filter YourFilter.pm on Target.pm, then result can be used as FilteredTarget
@@ -33,50 +37,52 @@ This module enables you to apply source filter on external module.
 
 # OPTIONS
 
-Rest of the options are passed to `import` of filtered module.
-
-- `by`
+## `by`
 
 Mandatory. Specify a source filter module you want to apply on an external module.
 
-- `with`
+## `with`
 
 Specify arguments passed to source filter.  NOTE that this value is just embedded as a scalar string.
 
-- `as`
+## `as`
 
 Specify the package name for the resultant filtered module.
 This option can be omitted. If omitted, original names are used.
 
-- `on`
+## `on`
 
 Mandatory. Specify a target module. `on` keyword can be ommited if this is the last option.
 
-- `use_ppi`
+## `use\_ppi`
 
 If true, [PPI](http://search.cpan.org/perldoc?PPI) is used for replacement by `as`. If PPI is available, defaults to true. Otherwise false.
+
+## Others
+
+Rest of the options are passed to `import` of filtered module.
 
 # CAVEATS
 
 - This module uses @INC hook.
 
-For @INC hook, please consult `perldoc -f require`. Hook itself is enabled in short period but it may affect other modules.
+    For @INC hook, please consult `perldoc -f require`. Hook itself is enabled in short period but it may affect other modules.
 
 - Replacement by `as` is applied in limited context.
 
-If you specified `as => FilteredTarget, on => Target`, the following codes:
+    If you specified `as => FilteredTarget, on => Target`, the following codes:
 
-    package Target::work;
-    package Target;
-    Target::work::call();
+        package Target::work;
+        package Target;
+        Target::work::call();
 
-are transformed into as follows:
+    are transformed into as follows:
 
-    package FilteredTarget::work;
-    package FilteredTarget;
-    FilteredTarget::work::call();
+        package FilteredTarget::work;
+        package FilteredTarget;
+        FilteredTarget::work::call();
 
-Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `use_ppi` is false. `'\bTarget\b'` in arguments of `package` statements and bare words are replaced if `use_ppi` is true.
+    Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `use_ppi` is false. `'\bTarget\b'` in arguments of `package` statements and bare words are replaced if `use_ppi` is true.
 
 # SEE ALSO
 
@@ -87,7 +93,9 @@ Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `us
 
 Yasutaka ATARASHI <yakex@cpan.org>
 
-# LICENSE
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Yasutaka ATARASHI.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
