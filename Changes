@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * Use `can' instead of direct access to symbol table.
+    * No functional changes:
+        * Avoid false alarm by prereq_matches_use Kwalitee indicator.
+        * Use Pod::Weaver.
 
 v0.0.4    2012-10-18 02:47:28 Asia/Tokyo
     * Add using PPI feature (use_ppi option).
