@@ -1,6 +1,13 @@
 use strict;
 use warnings;
 
+my $pkg2file = sub {
+	my ($pkg) = shift;
+	$pkg =~ s@::@/@;
+	$pkg .= '.pm';
+	return $pkg;
+};
+
 package filtered; # for Pod::Weaver
 
 # ABSTRACT: Apply source filter on external module
