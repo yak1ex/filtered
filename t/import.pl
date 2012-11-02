@@ -49,6 +49,6 @@ BEGIN { ::use_ok('filtered', by => 'MyFilter2', as => 'FilteredTest3', on => 'Fi
 package d;
 
 # Different target should be available
-BEGIN { ::use_ok('filtered', by => 'MyFilter2', @arg, 'FilterTest3', 'call'); }
+BEGIN { ::use_ok('filtered', by => 'MyFilter2', @arg, 'Test::Test::FilterTest3', 'call'); }
 
 ::is(call(), 'BARZOTZOT');

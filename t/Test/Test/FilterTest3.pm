@@ -1,4 +1,4 @@
-package FilterTest3;
+package Test::Test::FilterTest3;
 
 use strict;
 

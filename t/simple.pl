@@ -39,7 +39,7 @@ BEGIN { use_ok('filtered', by => 'MyFilter2', as => 'FilteredTest2', on => 'Filt
 BEGIN { use_ok('filtered', by => 'MyFilter2', as => 'FilteredTest3', on => 'FilterTest2', @arg); }
 
 # Different target should be available
-BEGIN { use_ok('filtered', by => 'MyFilter2', @arg, 'FilterTest3'); }
+BEGIN { use_ok('filtered', by => 'MyFilter2', @arg, 'Test::Test::FilterTest3'); }
 
 BEGIN { use_ok('filtered', by => 'MyFilter3', as => 'FilteredTest4', with => 'sub { s/FOO/BAR/g }', on => 'FilterTest', @arg); }
 
@@ -47,5 +47,5 @@ is(FilteredTest::call(), 'BARBARBAR');
 is(FilteredTest::ppi_check(), $USE_PPI ? 'FilterTest::Module' : 'FilteredTest::Module');
 is(FilteredTest2::call(), 'BARFOO');
 is(FilteredTest3::call(), 'BARBAR');
-is(FilterTest3::call(), 'BARZOTZOT');
+is(Test::Test::FilterTest3::call(), 'BARZOTZOT');
 is(FilteredTest4::call(), 'BARBARBAR');

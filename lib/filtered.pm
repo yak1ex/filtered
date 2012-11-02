@@ -3,7 +3,7 @@ use warnings;
 
 my $pkg2file = sub {
 	my ($pkg) = shift;
-	$pkg =~ s@::@/@;
+	$pkg =~ s@::@/@g;
 	$pkg .= '.pm';
 	return $pkg;
 };
