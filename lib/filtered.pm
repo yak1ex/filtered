@@ -55,6 +55,11 @@ sub _filter_by_ppi
 sub filtered::hook::INC
 {
 	my ($self, $filename) = @_;
+	if($pkg2file->($self->{_TARGET}) ne $filename) {
+		warn "Unexpected loading of $filename";
+		return;
+	}
+
 	$self->{_FILENAME} = $filename;
 	shift @INC; # TODO: Gain robustness # NOTE: Just one time application
 
