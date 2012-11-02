@@ -57,7 +57,7 @@ sub filtered::hook::INC
 {
 	my ($self, $filename) = @_;
 	if($pkg2file->($self->{_TARGET}) ne $filename) {
-		warn "Unexpected loading of $filename";
+		warn "Unexpected loading of $filename against $self->{_TARGET}";
 		return;
 	}
 
