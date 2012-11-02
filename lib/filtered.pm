@@ -47,8 +47,7 @@ sub _filter_by_ppi
 
 	require PPI::Transform::PackageName;
 	my $trans = PPI::Transform::PackageName->new(
-		-package_name => sub { s/\b$self->{_TARGET}/$self->{_AS}/ },
-		-word         => sub { s/\b$self->{_TARGET}\b/$self->{_AS}/ },
+		-all => sub { s/^$self->{_TARGET}\b/$self->{_AS}/ }
 	);
 	$trans->apply($ref);
 }
