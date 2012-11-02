@@ -17,6 +17,8 @@ package filtered::hook; ## no critic (RequireFilenameMatchesPackage)
 
 # VERSION
 
+my %MYINC;
+
 sub new
 {
 	my ($self, %arg)  = @_;
@@ -59,7 +61,7 @@ sub filtered::hook::INC
 #print "SELF: $self / FILTER: $self->{_FILTER} / AS: $self->{_AS} / FILENAME: $filename\n";
 
 # NOTE: The following part is based on perldoc -f require
-	if (exists $INC{$self}{$filename}) {
+	if (exists $MYINC{$self}{$filename}) {
 		# return 1 in original require
 		return (sub {
 			if($_[1]) {
@@ -70,7 +72,7 @@ sub filtered::hook::INC
 			} else {
 				return 0;
 			}
-		}, 1) if $INC{$self}{$filename};
+		}, 1) if $MYINC{$self}{$filename};
 		die "Compilation failed in require";
 	}
 	my ($realfilename,$result);
@@ -78,7 +80,7 @@ sub filtered::hook::INC
 		foreach my $prefix (@INC) {
 			$realfilename = "$prefix/$filename";
 			if (-f $realfilename) {
-				$INC{$self}{$filename} = $realfilename;
+				$MYINC{$self}{$filename} = $realfilename;
 				last ITER;
 			}
 		}
