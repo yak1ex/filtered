@@ -31,12 +31,13 @@ sub new
 # NOTE: To store data in object is probably not good idea because this prohibits re-entrance.
 sub init
 {
-	my ($self, $target, $as, $with, $ppi) = @_;
+	my ($self, $target, $as, $with, $ppi, $prev) = @_;
 
 	$self->{_TARGET} = $target;
 	$self->{_AS} = $as;
 	$self->{_WITH} = $with;
 	$self->{_PPI} = $ppi;
+	$self->{_PREV} = $prev;
 	return $self;
 }
 
@@ -71,6 +72,7 @@ sub filtered::hook::INC
 		return (sub {
 			if($_[1]) {
 				delete $INC{$filename};
+				$INC{$filename} = $self->{_PREV}[1] if($self->{_PREV}[0]);
 				$_ = "1;\n";
 				$_[1] = 0;
 				return 1;
@@ -111,6 +113,7 @@ sub filtered::hook::INC
 		my ($sub, $state) = @_;
 		if($state == 1) { # Inject filter at the beginning
 			delete $INC{$filename};
+			$INC{$filename} = $self->{_PREV}[1] if($self->{_PREV}[0]);
 			if(defined $self->{_WITH}) {
 				$_ = 'use '.$self->{_FILTER}.' '.$self->{_WITH}.";\n";
 			} else {
@@ -171,9 +174,12 @@ sub import
 	croak '`by\' must be specified' if ! defined($filter);
 	croak '`on\' or target name must be specified' if ! defined($target);
 	$hook{$filter} = filtered::hook->new(FILTER => $filter) if ! exists $hook{$filter};
-	unshift @INC, 	$hook{$filter}->init($target, $as, $with, $ppi);
+	my $prev = [exists($INC{$pkg2file->($target)}), (exists($INC{$pkg2file->($target)}) ? $INC{$pkg2file->($target)} : '')];
+	unshift @INC, $hook{$filter}->init($target, $as, $with, $ppi, $prev);
+	delete $INC{$pkg2file->($target)};
 	if(!defined eval "require $target") {
 		delete $INC{$hook{$filter}{_FILENAME}}; # For error in internal require;
+		$INC{$hook{$filter}{_FILENAME}} = $prev->[1] if $prev->[0];
 		croak "Can't load $target by $@";
 	}
 	if(defined $as) {
