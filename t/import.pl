@@ -30,7 +30,7 @@ BEGIN { ::use_ok('filtered', by => 'MyFilter', as => 'FilteredTest', on => 'Filt
 BEGIN { ::use_ok('filtered', by => 'MyFilter', as => 'FilteredTest', @arg, 'FilterTest', 'call'); }
 
 ::is(call(), 'BARBARBAR');
-::is(FilteredTest::ppi_check(), $USE_PPI ? 'FilterTest::Module' : 'FilteredTest::Module');
+::is(FilteredTest::ppi_check(), $USE_PPI ? 'Dummy::FilterTest::Module' : 'Dummy::FilteredTest::Module');
 
 package b;
 

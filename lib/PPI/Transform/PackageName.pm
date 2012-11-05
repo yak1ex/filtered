@@ -53,10 +53,14 @@ sub document
         my $quotes = $doc->find('PPI::Token::Quote');
         $quotes ||= [];
         for my $quote (@$quotes) {
-                my $content = $quote->content;
-                $_ = $content;
+                my $string = $quote->string;
+                $_ = $string;
                 $self->{_QUOTE}->();
-                $quote->set_content($_) if $_ ne $content;    
+                if($_ ne $string) {
+                    my $content = $quote->content;
+                    my $index = index($content, $string);
+                    substr($quote->{content}, $index, length($string)) = $_;
+                }
         }
     }
     return 1;
