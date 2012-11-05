@@ -17,6 +17,9 @@ package filtered::hook; ## no critic (RequireFilenameMatchesPackage)
 
 # VERSION
 
+use File::Path;
+use File::Basename;
+
 my %MYINC;
 
 sub new
@@ -113,11 +116,24 @@ sub filtered::hook::INC
 		if($state == 1) { # Inject filter at the beginning
 			delete $INC{$filename};
 			$INC{$filename} = $self->{_PREV}[1] if($self->{_PREV}[0]);
+			$_ = 'use '.$self->{_FILTER};
 			if(defined $self->{_WITH}) {
-				$_ = 'use '.$self->{_FILTER}.' '.$self->{_WITH}.";\n";
-			} else {
-				$_ = 'use '.$self->{_FILTER}.";\n";
+				$_ .= ' '.$self->{_WITH};
 			}
+			if(exists $ENV{FILTERED_ROOT}) {
+				my $asfile;
+				if(defined($self->{_AS})) {
+					$asfile = $self->{_AS};
+					$asfile =~ s@::@/@g;
+					$asfile .= '.pm';
+				} else {
+					$asfile = $filename;
+				}
+				my $dir = dirname($ENV{FILTERED_ROOT}.'/'.$asfile);
+				File::Path::make_path($dir) if ! -d $dir;
+				$_ .= "; use Filter::tee '".$ENV{FILTERED_ROOT}.'/'.$asfile."'";
+			}
+			$_ .= ";\n";
 			$_[1] = 0;
 		} elsif(eof($fh)) {
 			close $fh;
@@ -256,6 +272,11 @@ If true, L<PPI> is used for replacement by C<as>. If PPI is available, defaults 
 
 Rest of the options are passed to C<import> of filtered module.
 
+=head1 DEBUG
+
+If environment variable C<FILTERED_ROOT> is specified, filtered results are stored under the directory.
+Assuming the filtered module name is C<Filtered::Target>, the filtered result is stored as C<FILTERED_ROOT/Filtered/Target.pm>.
+
 =head1 CAVEATS
 
 =begin :list
@@ -271,14 +292,16 @@ If you specified C<as =E<gt> FilteredTarget, on =E<gt> Target>, the following co
   package Target::work;
   package Target;
   Target::work::call();
+  extends 'Target::work';
 
 are transformed into as follows:
 
   package FilteredTarget::work;
   package FilteredTarget;
   FilteredTarget::work::call();
+  extends 'FilteredTarget::work';
 
-Actually, only C<'\bpackage\s+Target\b'> and C<'\bTarget::\b'> are replaced if C<use_ppi> is false. C<'\bTarget\b'> in arguments of C<package> statements and bare words are replaced if C<use_ppi> is true.
+Actually, only C<'\bpackage\s+Target\b'> and C<'\bTarget::\b'> are replaced if C<use_ppi> is false. C<'^Target\b'> in bare words and quotes are replaced if C<use_ppi> is true.
 
 =end :list
 

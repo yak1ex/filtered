@@ -62,6 +62,11 @@ If true, [PPI](http://search.cpan.org/perldoc?PPI) is used for replacement by `a
 
 Rest of the options are passed to `import` of filtered module.
 
+# DEBUG
+
+If environment variable `FILTERED_ROOT` is specified, filtered results are stored under the directory.
+Assuming the filtered module name is `Filtered::Target`, the filtered result is stored as `FILTERED_ROOT/Filtered/Target.pm`.
+
 # CAVEATS
 
 - This module uses @INC hook.
@@ -75,14 +80,16 @@ Rest of the options are passed to `import` of filtered module.
         package Target::work;
         package Target;
         Target::work::call();
+        extends 'Target::work';
 
     are transformed into as follows:
 
         package FilteredTarget::work;
         package FilteredTarget;
         FilteredTarget::work::call();
+        extends 'FilteredTarget::work';
 
-    Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `use_ppi` is false. `'\bTarget\b'` in arguments of `package` statements and bare words are replaced if `use_ppi` is true.
+    Actually, only `'\bpackage\s+Target\b'` and `'\bTarget::\b'` are replaced if `use_ppi` is false. `'^Target\b'` in bare words and quotes are replaced if `use_ppi` is true.
 
 # SEE ALSO
 
