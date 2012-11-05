@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More tests => 12;
 
 use FindBin;
 use lib "$FindBin::Bin";

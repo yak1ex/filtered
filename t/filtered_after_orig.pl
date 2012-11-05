@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More tests => 25;
 use Test::Exception;
 
 use FindBin;

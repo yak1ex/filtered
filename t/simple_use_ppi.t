@@ -2,7 +2,7 @@ BEGIN {
 	require Test::More;
 	Test::More::plan(skip_all => 'PPI is not available') unless eval { require PPI; };
 }
-use Test::More tests => 15;
+use Test::More;
 
 use FindBin;
 use lib $FindBin::Bin;
