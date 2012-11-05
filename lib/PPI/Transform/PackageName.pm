@@ -34,6 +34,7 @@ sub document
     $doc->prune('PPI::Token::Comment');
     if(defined $self->{_PKG} && defined $self->{_WORD}) {
         my $words = $doc->find('PPI::Token::Word');
+        $words ||= [];
         for my $word (@$words) {
             if(defined $self->{_PKG} && $word->statement->class eq 'PPI::Statement::Package') {
                 my $content = $word->content;
@@ -50,6 +51,7 @@ sub document
     }
     if(defined $self->{_QUOTE}) {
         my $quotes = $doc->find('PPI::Token::Quote');
+        $quotes ||= [];
         for my $quote (@$quotes) {
                 my $content = $quote->content;
                 $_ = $content;
