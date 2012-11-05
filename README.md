@@ -4,7 +4,7 @@ filtered - Apply source filter on external module
 
 # VERSION
 
-version v0.0.5
+version v0.0.6
 
 # SYNOPSIS
 
