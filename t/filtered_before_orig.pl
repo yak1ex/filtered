@@ -53,6 +53,7 @@ BEGIN { use_ok('FilterTest'); }
 is(FilterTest::call(), 'FOOFOOFOO');
 is(FilteredTest::call(), 'BARBARBAR');
 is(FilteredTest::ppi_check(), $USE_PPI ? 'Dummy::FilterTest::Module' : 'Dummy::FilteredTest::Module');
+is(FilteredTest::ppi_check_old(), 'FilteredTest::Module');
 is(FilteredTest2::call(), 'BARFOO');
 is(FilterTest2::call(), 'FOOFOOFOOFOO');
 is(FilteredTest3::call(), 'BARBAR');

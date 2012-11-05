@@ -45,6 +45,7 @@ BEGIN { use_ok('filtered', by => 'MyFilter3', as => 'FilteredTest4', with => 'su
 
 is(FilteredTest::call(), 'BARBARBAR');
 is(FilteredTest::ppi_check(), $USE_PPI ? 'Dummy::FilterTest::Module' : 'Dummy::FilteredTest::Module');
+is(FilteredTest::ppi_check_old(), 'FilteredTest::Module');
 is(FilteredTest2::call(), 'BARFOO');
 is(FilteredTest3::call(), 'BARBAR');
 is(Test::Test::FilterTest3::call(), 'BARZOTZOT');
