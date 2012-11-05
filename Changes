@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+v0.0.6    2012-11-05 23:41:58 Asia/Tokyo
     [Functional changes]
         * Add debug feature.
         * Replace package name even though it is in quoted strings, with PPI.
