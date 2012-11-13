@@ -4,7 +4,7 @@ filtered - Apply source filter on external module
 
 # VERSION
 
-version v0.0.6
+version v0.0.7
 
 # SYNOPSIS
 
@@ -64,7 +64,7 @@ Rest of the options are passed to `import` of filtered module.
 
 # DEBUG
 
-If environment variable `FILTERED_ROOT` is specified, filtered results are stored under the directory.
+If [Filter::tee](http://search.cpan.org/perldoc?Filter::tee) is available and environment variable `FILTERED_ROOT` is specified, filtered results are stored under the directory.
 Assuming the filtered module name is `Filtered::Target`, the filtered result is stored as `FILTERED_ROOT/Filtered/Target.pm`.
 
 # CAVEATS
