@@ -1,3 +1,7 @@
+BEGIN {
+	require Test::More;
+	Test::More::plan(skip_all => 'Filter::tee is not available') unless eval { require Filter::tee; };
+}
 use Test::More tests => 10;
 use Test::Exception;
 

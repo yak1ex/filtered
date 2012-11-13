@@ -121,17 +121,21 @@ sub filtered::hook::INC
 				$_ .= ' '.$self->{_WITH};
 			}
 			if(exists $ENV{FILTERED_ROOT}) {
-				my $asfile;
-				if(defined($self->{_AS})) {
-					$asfile = $self->{_AS};
-					$asfile =~ s@::@/@g;
-					$asfile .= '.pm';
+				if(eval { require Filter::tee; }) {
+					my $asfile;
+					if(defined($self->{_AS})) {
+						$asfile = $self->{_AS};
+						$asfile =~ s@::@/@g;
+						$asfile .= '.pm';
+					} else {
+						$asfile = $filename;
+					}
+					my $dir = dirname($ENV{FILTERED_ROOT}.'/'.$asfile);
+					File::Path::make_path($dir) if ! -d $dir;
+					$_ .= "; use Filter::tee '".$ENV{FILTERED_ROOT}.'/'.$asfile."'";
 				} else {
-					$asfile = $filename;
+					warn 'Ignore environment variable FILTERED_ROOT because Filter::tee is not available';
 				}
-				my $dir = dirname($ENV{FILTERED_ROOT}.'/'.$asfile);
-				File::Path::make_path($dir) if ! -d $dir;
-				$_ .= "; use Filter::tee '".$ENV{FILTERED_ROOT}.'/'.$asfile."'";
 			}
 			$_ .= ";\n";
 			$_[1] = 0;
@@ -274,7 +278,7 @@ Rest of the options are passed to C<import> of filtered module.
 
 =head1 DEBUG
 
-If environment variable C<FILTERED_ROOT> is specified, filtered results are stored under the directory.
+If L<Filter::tee> is available and environment variable C<FILTERED_ROOT> is specified, filtered results are stored under the directory.
 Assuming the filtered module name is C<Filtered::Target>, the filtered result is stored as C<FILTERED_ROOT/Filtered/Target.pm>.
 
 =head1 CAVEATS
