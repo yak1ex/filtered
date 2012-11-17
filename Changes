@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+v0.0.7    2012-11-13 23:57:09 Asia/Tokyo
     * Handle correctly optional prereq Filter::tee.
 
 v0.0.6    2012-11-05 23:41:58 Asia/Tokyo
