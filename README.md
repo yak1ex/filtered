@@ -54,7 +54,7 @@ This option can be omitted. If omitted, original names are used.
 
 Mandatory. Specify a target module. `on` keyword can be ommited if this is the last option.
 
-## `use\_ppi`
+## `use_ppi`
 
 If true, [PPI](http://search.cpan.org/perldoc?PPI) is used for replacement by `as`. If PPI is available, defaults to true. Otherwise false.
 
